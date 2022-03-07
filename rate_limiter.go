@@ -33,7 +33,7 @@ var _ RateLimiter = (*channelRateLimiter)(nil)
 
 func NewRateLimiter(options ...RateLimiterOption) RateLimiter {
 	rl := &channelRateLimiter{
-		rateLimit: math.MaxInt,
+		rateLimit: math.MaxInt32,
 		doTimeout: false,
 		timeout:   8760 * time.Hour, // 1 Year - mimics infinity
 		onTimeout: func() error {

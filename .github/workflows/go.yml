@@ -1,4 +1,4 @@
-name: Go
+name: Compile and Test crispy
 
 on:
   workflow_dispatch:
@@ -6,6 +6,9 @@ on:
     branches: [main]
   pull_request:
     branches: [develop]
+
+env:
+  GO111MODULE: "on"
 
 jobs:
   build:
@@ -21,8 +24,21 @@ jobs:
         with:
           go-version: ${{ matrix.golang }}
 
-      - name: Build
-        run: go build -v ./...
+      - name: Get go tools
+        run: |
+          go install mvdan.cc/gofumpt@latest
+
+      - name: Get deps
+        run: go mod download
+
+      - name: Format
+        run: gofumpt -w .
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v3.1.0
+        with:
+          version: latest
+          github-token: ${{ github.token }}
 
       - name: Test
         run: go test -v ./...
